@@ -5,8 +5,14 @@
  */
 package accesoAObjetos;
 
+import conexionMySQL.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import objetos.Empleado;
 import objetos.Tienda;
 
 
@@ -15,13 +21,14 @@ import objetos.Tienda;
  * @author erikssonherlo
  */
 public class AccesoTienda {
-        public void insertarTienda(Tienda tienda){
+        public boolean insertarTienda(Tienda tienda){
         String query = "INSERT INTO TIENDA (Nombre,Direccion,Codigo_Tienda,Telefono_1,Telefono_2,Horario,Correo_Electronico)"
                         + "VALUES(?,?,?,?,?,?,?)";
         Connection conexion = null;
-        PreparedStatement enviar = null;
+        PreparedStatement enviar = null; //Enviar Datos
+       
         try {
-            conexion = conexionDB.Conexion.conexionDB();
+            conexion = conexionMySQL.Conexion.conexionDB();
             enviar = conexion.prepareStatement(query);
             
             enviar.setString(1, tienda.getNombre());
@@ -33,14 +40,40 @@ public class AccesoTienda {
             enviar.setString(7, tienda.getCorreoElectronico());
             
             enviar.executeUpdate();
-            
+            return true;
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
+            return false;
             
         }finally {
-            conexionDB.Conexion.close(enviar);
-        conexionDB.Conexion.close(conexion);
-        
+            conexionMySQL.Conexion.close(enviar);
+            conexionMySQL.Conexion.close(conexion);
+            
         }
+       
+    }
+    public Tienda obtenerTienda(){
+        
+        Tienda tienda = null;
+        Conexion conexion = new Conexion();        
+        
+        PreparedStatement obtener = null;
+        
+        ResultSet rs = conexion.getTabla("SELECT * FROM TIENDA LIMIT 1");
+        try {
+            while (rs.next()) {
+                tienda = new Tienda(rs.getString("Nombre"), rs.getString("Direccion"), rs.getString("Codigo_Tienda"), rs.getString("Telefono_1"));
+                
+            }
+
+        } catch (Exception e) {
+
+        }
+
+        
+        return tienda;
+    
     }
 }
+
+        

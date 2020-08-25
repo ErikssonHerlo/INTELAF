@@ -15,14 +15,14 @@ import objetos.Tiempo;
  * @author erikssonherlo
  */
 public class AccesoTiempo {
-     public void insertarTiempo(Tiempo tiempo){
+     public boolean insertarTiempo(Tiempo tiempo){
         String query = "INSERT INTO TIEMPO (Tienda_Origen,Tienda_Destino,Tiempo)"
                         + "VALUES(?,?,?)";
         Connection conexion = null;
         PreparedStatement enviar = null;
         PreparedStatement enviarDoble = null;
         try {
-            conexion = conexionDB.Conexion.conexionDB();
+            conexion = conexionMySQL.Conexion.conexionDB();
             enviar = conexion.prepareStatement(query);
             enviarDoble = conexion.prepareStatement(query);
             //Envia los Datos de Tiempo de Origen y Destino
@@ -35,13 +35,14 @@ public class AccesoTiempo {
             enviarDoble.setString(2, tiempo.getTiendaOrigen());
             enviarDoble.setInt(3, tiempo.getTiempo());
             enviarDoble.executeUpdate();
+            return true;
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
-            
+            return false;
         }finally {
-            conexionDB.Conexion.close(enviar);
-            conexionDB.Conexion.close(enviarDoble);
-        conexionDB.Conexion.close(conexion);
+            conexionMySQL.Conexion.close(enviar);
+            conexionMySQL.Conexion.close(enviarDoble);
+        conexionMySQL.Conexion.close(conexion);
         
         }
     }

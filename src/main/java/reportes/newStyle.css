@@ -1,0 +1,60 @@
+
+h1 {
+    display: block ruby;
+    color: white;
+    margin: 50px;
+    padding: 30px 50px;
+}
+
+header {
+    display: block;
+    margin: auto;
+    text-align: center;
+    overflow: hidden;
+    background: auto;
+    color: black;
+    font-size: x-large; 
+}
+
+body {
+    background-color: orange;
+}
+
+article {
+    display: table-cell;
+    border: white 1px solid;
+    background-color: navajowhite;
+    text-align: -moz-center;
+    width: 10%;
+    font-weight: bolder;
+}
+.naranja2 {
+    display: inline-block;
+    margin: auto;
+    align-items: center;
+    background-color: #f56f3a;
+    width: 30%;
+}
+footer {
+    font-weight: bolder;
+    color: whitesmoke;
+    display: block;
+    margin: auto;
+    border: 3px solid;
+    background-color: black;
+    
+}
+
+.estilo {
+    font-family: fantasy;
+    text-align: center;
+    font-weight: 300;
+}
+
+.lista {
+    float: left;
+}
+
+.error {
+    color: tomato;
+}

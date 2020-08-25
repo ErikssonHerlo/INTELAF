@@ -5,9 +5,14 @@
  */
 package accesoAObjetos;
 
-import conexionDB.Conexion;
+import conexionMySQL.Conexion;
+import java.awt.image.RescaleOp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import objetos.Empleado;
 
 /**
@@ -15,13 +20,13 @@ import objetos.Empleado;
  * @author erikssonherlo
  */
 public class AccesoEmpleado {
-    public void insertarEmpleado(Empleado empleado){
+    public boolean insertarEmpleado(Empleado empleado){
         String query = "INSERT INTO EMPLEADO (Nombre,Codigo_Empleado,Telefono,DPI,NIT,Correo_Electronico,Direccion)"
                         + "VALUES(?,?,?,?,?,?,?)";
         Connection conexion = null;
         PreparedStatement enviar = null;
         try {
-            conexion = conexionDB.Conexion.conexionDB();
+            conexion = conexionMySQL.Conexion.conexionDB();
             enviar = conexion.prepareStatement(query);
             enviar.setString(1, empleado.getNombre());
             enviar.setString(2, empleado.getCodigoEmpleado());
@@ -30,16 +35,48 @@ public class AccesoEmpleado {
             enviar.setString(5, empleado.getNIT());
             enviar.setString(6, empleado.getCorreoElectronico());
             enviar.setString(7, empleado.getDireccion());
-            
             enviar.executeUpdate();
+            return true;
             
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
+            return true;
             
         }finally {
-            conexionDB.Conexion.close(enviar);
-        conexionDB.Conexion.close(conexion);
+            conexionMySQL.Conexion.close(enviar);
+        //conexionMySQL.Conexion.close(conexion);
         
         }
+    }
+    public Empleado obtenerEmpleado(String codigo){
+        String query = "SELECT * FROM EMPLEADO WHERE Codigo_Empleado = ?";
+        Empleado empleado = null;
+                
+        Connection conexion = null;
+        PreparedStatement obtener = null;
+        ResultSet rs  = null;
+        
+        try {
+            conexion = Conexion.conexionDB();
+            obtener = conexion.prepareStatement(query);
+            obtener.setString(1, codigo);
+            rs = obtener.executeQuery();
+            if(rs.next()){
+              //  empleado = new Empleado(rs.getString("Nombre"), rs.getString("Codigo_Empleado"), rs.getString("Telefono"), rs.getString("DPI"), rs.getString("NIT"), codigo, query)
+                empleado=new Empleado(rs.getString("Nombre"), rs.getString("Codigo_Empleado"), rs.getString("Telefono"), rs.getString("DPI"));
+                empleado.setNIT(rs.getString("NIT"));
+                empleado.setCorreoElectronico(rs.getString("Correo_Electronico"));
+                empleado.setDireccion(rs.getString("Direccion"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AccesoEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            //Conexion.close(rs);
+            Conexion.close(obtener);
+            Conexion.close(conexion);
+        }
+        
+        return empleado;
+    
     }
 }

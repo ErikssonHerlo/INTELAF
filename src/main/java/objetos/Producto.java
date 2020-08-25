@@ -13,27 +13,29 @@ public class Producto {
     private String nombre;
     private String fabricante;
     private String codigoProducto;
-    private int cantidad;
+    private int existencia;
     private double precio;
     private String tiendaUbicacion;
     private String descripcion;
     private int garantia;
 
-    //constructor carga de archivos
-    public Producto(String nombre, String fabricante, String codigoProducto, int cantidad, double precio, String tiendaUbicacion) {
+    //constructor Carga de Datos Obligatorios
+    public Producto(String nombre, String fabricante, String codigoProducto, int existencia, double precio, String tiendaUbicacion) {
         this.nombre = nombre;
         this.fabricante = fabricante;
         this.codigoProducto = codigoProducto;
-        this.cantidad = cantidad;
+        this.existencia = existencia;
         this.precio = precio;
         this.tiendaUbicacion = tiendaUbicacion;
-    }
-    //Constructor para todos los metodos
-    public Producto(String nombre, String fabricante, String codigoProducto, int cantidad, double precio, String tiendaUbicacion, String descripcion, int garantia) {
+    }    
+
+    //Constructor para todos los Datos
+
+    public Producto(String nombre, String fabricante, String codigoProducto, int existencia, double precio, String tiendaUbicacion, String descripcion, int garantia) {
         this.nombre = nombre;
         this.fabricante = fabricante;
         this.codigoProducto = codigoProducto;
-        this.cantidad = cantidad;
+        this.existencia = existencia;
         this.precio = precio;
         this.tiendaUbicacion = tiendaUbicacion;
         this.descripcion = descripcion;
@@ -52,8 +54,8 @@ public class Producto {
         this.codigoProducto = codigoProducto;
     }
 
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+    public void setExistencia(int existencia) {
+        this.existencia = existencia;
     }
 
     public void setPrecio(double precio) {
@@ -84,8 +86,8 @@ public class Producto {
         return codigoProducto;
     }
 
-    public int getCantidad() {
-        return cantidad;
+    public int getExistencia() {
+        return existencia;
     }
 
     public double getPrecio() {
@@ -103,7 +105,8 @@ public class Producto {
     public int getGarantia() {
         return garantia;
     }
-   
+
+
     
     
 }

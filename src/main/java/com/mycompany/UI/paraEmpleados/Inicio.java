@@ -5,8 +5,13 @@
  */
 package com.mycompany.UI.paraEmpleados;
 
+import backend.InicioUsuario;
+import com.mycompany.UI.paraUsuarios.MenuCliente;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import objetos.Cliente;
+import objetos.Empleado;
 
 /**
  *
@@ -50,8 +55,8 @@ public class Inicio extends javax.swing.JFrame {
 
         titulo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 48)); // NOI18N
         titulo.setForeground(new java.awt.Color(1, 1, 1));
-        titulo.setText("INTELAF");
-        getContentPane().add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 260, 220, 53));
+        titulo.setText("INICIAR SESIÓN");
+        getContentPane().add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 420, 53));
 
         instruccionesUsuario.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
         instruccionesUsuario.setForeground(new java.awt.Color(4, 2, 2));
@@ -99,13 +104,42 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_salirActionPerformed
 
     private void IngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IngresarActionPerformed
-        MenuEmpleado accesarAlMenu = new MenuEmpleado();
+        String codigo =textoUsuario.getText();
+        InicioUsuario user1 = new InicioUsuario();
+        Empleado empleado = user1.iniciarSesionEmpleado(codigo);
+        InicioUsuario user2 = new InicioUsuario();
+        Cliente cliente = user2.iniciarSesionCliente(codigo);
+        if(empleado != null)
+        {
+            JOptionPane.showMessageDialog(null, "Bienvenido Empleado "+empleado.getNombre());
+        ElegirTienda accesarAlMenu = new ElegirTienda();
         accesarAlMenu.setVisible(true);
         this.setVisible(false);
+            
+            
+        }else if(cliente != null)
+        {
+            JOptionPane.showMessageDialog(null, "Bienvenido  "+cliente.getNombre()+" al Software de Intelaf");
+            
+        MenuCliente accesarAlMenu = new MenuCliente(cliente.getNombre(), cliente.getNIT());
+        accesarAlMenu.setVisible(true);
+        this.setVisible(false);   
+        
+        }
+        else if(textoUsuario.getText()==""){
+            JOptionPane.showMessageDialog(null, "Ingrese su Codigo para Iniciar Sesión");
+            
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Ingrese un Codigo de Inicio de Sesión correcto");
+        
+        }
+        
     }//GEN-LAST:event_IngresarActionPerformed
 
     private void textoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textoUsuarioActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_textoUsuarioActionPerformed
 
     /**

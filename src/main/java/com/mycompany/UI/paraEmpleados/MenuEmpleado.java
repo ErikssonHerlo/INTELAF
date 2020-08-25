@@ -6,6 +6,9 @@
 package com.mycompany.UI.paraEmpleados;
 
 import java.awt.Image;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 /**
@@ -15,13 +18,19 @@ import javax.swing.ImageIcon;
 public class MenuEmpleado extends javax.swing.JFrame {
     String Fondo1 = "FondoNaranja5.png";
     String Logotipo = "LogoHorizontalpequeño.png";
+    protected String nombreTienda;
+    protected String codigoTienda;
     /**
      * Creates new form Interfaz
      */
-    public MenuEmpleado() {
+    public MenuEmpleado(String nombreTienda, String codigoTienda) {
+        this.nombreTienda = nombreTienda;
+        this.codigoTienda = codigoTienda;
+        
         initComponents();
+        infoTienda.setText(nombreTienda);
         cargarFondo(Fondo1);
-        cargarLogotipo(Logotipo);
+        
     }
 
     /**
@@ -33,57 +42,106 @@ public class MenuEmpleado extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        Logo = new javax.swing.JLabel();
         Titulo = new javax.swing.JLabel();
-        IngresoUsuario = new javax.swing.JLabel();
-        IngresoContraseña = new javax.swing.JLabel();
-        Ingresar = new javax.swing.JButton();
-        Salir = new javax.swing.JButton();
+        inicioTienda = new javax.swing.JButton();
+        irMenuNuevaInfo = new javax.swing.JButton();
+        irMenuConsultas = new javax.swing.JButton();
+        irAVentas = new javax.swing.JButton();
+        irAPedido = new javax.swing.JButton();
+        cerrarSesion = new javax.swing.JButton();
+        infoTienda = new javax.swing.JLabel();
+        irAReportes = new javax.swing.JButton();
         Fondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(640, 600));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        Logo.setText("Logo");
-        getContentPane().add(Logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 10, 222, 91));
-
-        Titulo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 48)); // NOI18N
+        Titulo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 36)); // NOI18N
         Titulo.setForeground(new java.awt.Color(1, 1, 1));
-        Titulo.setText("Control de Pedidos");
-        getContentPane().add(Titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, -1, 53));
+        Titulo.setText("MENÚ PRINCIPAL");
+        getContentPane().add(Titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 340, 53));
 
-        IngresoUsuario.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
-        IngresoUsuario.setForeground(new java.awt.Color(4, 2, 2));
-        IngresoUsuario.setText("Ingrese el Usuario:");
-        getContentPane().add(IngresoUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 210, 250, 30));
-
-        IngresoContraseña.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
-        IngresoContraseña.setForeground(new java.awt.Color(4, 2, 2));
-        IngresoContraseña.setText("Ingrese su Contraseña:");
-        getContentPane().add(IngresoContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 210, 230, 30));
-
-        Ingresar.setBackground(new java.awt.Color(43, 46, 46));
-        Ingresar.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
-        Ingresar.setForeground(new java.awt.Color(250, 250, 244));
-        Ingresar.setText("Ingresar");
-        Ingresar.addActionListener(new java.awt.event.ActionListener() {
+        inicioTienda.setBackground(new java.awt.Color(43, 46, 46));
+        inicioTienda.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        inicioTienda.setForeground(new java.awt.Color(250, 250, 244));
+        inicioTienda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/LogoHorizontalpequeño.png"))); // NOI18N
+        inicioTienda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IngresarActionPerformed(evt);
+                inicioTiendaActionPerformed(evt);
             }
         });
-        getContentPane().add(Ingresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 445, 290, 40));
+        getContentPane().add(inicioTienda, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 10, 222, 91));
 
-        Salir.setBackground(new java.awt.Color(43, 46, 46));
-        Salir.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
-        Salir.setForeground(new java.awt.Color(250, 250, 244));
-        Salir.setText("Salir");
-        Salir.addActionListener(new java.awt.event.ActionListener() {
+        irMenuNuevaInfo.setBackground(new java.awt.Color(43, 46, 46));
+        irMenuNuevaInfo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        irMenuNuevaInfo.setForeground(new java.awt.Color(250, 250, 244));
+        irMenuNuevaInfo.setText("Agregar Nueva Información");
+        irMenuNuevaInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SalirActionPerformed(evt);
+                irMenuNuevaInfoActionPerformed(evt);
             }
         });
-        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 490, 290, 40));
+        getContentPane().add(irMenuNuevaInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 190, 290, 40));
+
+        irMenuConsultas.setBackground(new java.awt.Color(43, 46, 46));
+        irMenuConsultas.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        irMenuConsultas.setForeground(new java.awt.Color(250, 250, 244));
+        irMenuConsultas.setText("Consultar Información");
+        irMenuConsultas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irMenuConsultasActionPerformed(evt);
+            }
+        });
+        getContentPane().add(irMenuConsultas, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 245, 290, 40));
+
+        irAVentas.setBackground(new java.awt.Color(43, 46, 46));
+        irAVentas.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        irAVentas.setForeground(new java.awt.Color(250, 250, 244));
+        irAVentas.setText("Realizar una Venta");
+        irAVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irAVentasActionPerformed(evt);
+            }
+        });
+        getContentPane().add(irAVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 300, 290, 40));
+
+        irAPedido.setBackground(new java.awt.Color(43, 46, 46));
+        irAPedido.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        irAPedido.setForeground(new java.awt.Color(250, 250, 244));
+        irAPedido.setText("Realizar un Pedido");
+        irAPedido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irAPedidoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(irAPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 355, 290, 40));
+
+        cerrarSesion.setBackground(new java.awt.Color(43, 46, 46));
+        cerrarSesion.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        cerrarSesion.setForeground(new java.awt.Color(250, 250, 244));
+        cerrarSesion.setText("Cerrar Sesión");
+        cerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cerrarSesionActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 465, 290, 40));
+
+        infoTienda.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
+        infoTienda.setText("Nombre Tienda");
+        getContentPane().add(infoTienda, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 104, -1, 20));
+
+        irAReportes.setBackground(new java.awt.Color(43, 46, 46));
+        irAReportes.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        irAReportes.setForeground(new java.awt.Color(250, 250, 244));
+        irAReportes.setText("Reportes");
+        irAReportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                irAReportesActionPerformed(evt);
+            }
+        });
+        getContentPane().add(irAReportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 410, 290, 40));
 
         Fondo.setBackground(new java.awt.Color(59, 55, 51));
         Fondo.setText("Fondo General");
@@ -92,17 +150,53 @@ public class MenuEmpleado extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
-        System.exit(0);        // TODO add your handling code here:
-    }//GEN-LAST:event_SalirActionPerformed
+    private void inicioTiendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inicioTiendaActionPerformed
+              // TODO add your handling code here:
+             ElegirTienda eleccion = new ElegirTienda();
+            eleccion.setVisible(true);
+            this.setVisible(false);   
+              
+    }//GEN-LAST:event_inicioTiendaActionPerformed
 
-    private void IngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IngresarActionPerformed
-/*        Aux1 = TextoADN1.getText();
-        Aux2 = TextoADN2.getText();
-        Analisis.Analizar(Aux1,Aux2);
-        JOptionPane.showMessageDialog(null,"Posibles Patrones: \n"+Analisis.Patrones+"Resultado del Analisis del ADN: \n"+Analisis.Coincidencias);
-   */     // TODO add your handling code here:
-    }//GEN-LAST:event_IngresarActionPerformed
+    private void irMenuConsultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irMenuConsultasActionPerformed
+        MenuVisualizarInformacion eleccion = new MenuVisualizarInformacion(nombreTienda, codigoTienda);
+        eleccion.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_irMenuConsultasActionPerformed
+
+    private void cerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSesionActionPerformed
+        Inicio iniciarInterfaz = new Inicio();
+        iniciarInterfaz.setVisible(true);// TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_cerrarSesionActionPerformed
+
+    private void irMenuNuevaInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irMenuNuevaInfoActionPerformed
+        MenuNuevaInformacion eleccion = new MenuNuevaInformacion(nombreTienda,codigoTienda);
+        
+        eleccion.setVisible(true);
+        this.setVisible(false);        // TODO add your handling code here:
+    }//GEN-LAST:event_irMenuNuevaInfoActionPerformed
+
+    private void irAPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irAPedidoActionPerformed
+        NuevoPedido eleccion = null;
+        try {
+            eleccion = new NuevoPedido(nombreTienda, codigoTienda);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        eleccion.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_irAPedidoActionPerformed
+
+    private void irAVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irAVentasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_irAVentasActionPerformed
+
+    private void irAReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irAReportesActionPerformed
+       MenuReportes eleccion = new  MenuReportes(nombreTienda, codigoTienda);// TODO add your handling code here:
+            eleccion.setVisible(true);
+       this.setVisible(false);
+    }//GEN-LAST:event_irAReportesActionPerformed
 
     /**
      */
@@ -112,19 +206,17 @@ public class MenuEmpleado extends javax.swing.JFrame {
         ImageIcon imageIconFinal = new ImageIcon(imageIcon.getImage().getScaledInstance(Fondo.getWidth(), Fondo.getHeight(), Image.SCALE_DEFAULT));
         Fondo.setIcon(imageIconFinal);
     }
-        public void cargarLogotipo(String NombreImagen)
-    {
-        ImageIcon imageIcon = new ImageIcon(getClass().getClassLoader().getResource(NombreImagen));
-        ImageIcon imageIconFinal = new ImageIcon(imageIcon.getImage().getScaledInstance(Logo.getWidth(), Logo.getHeight(), Image.SCALE_DEFAULT));
-        Logo.setIcon(imageIconFinal);
-    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JLabel Fondo;
-    public javax.swing.JButton Ingresar;
-    public javax.swing.JLabel IngresoContraseña;
-    public javax.swing.JLabel IngresoUsuario;
-    public javax.swing.JLabel Logo;
-    public javax.swing.JButton Salir;
     public javax.swing.JLabel Titulo;
+    public javax.swing.JButton cerrarSesion;
+    private javax.swing.JLabel infoTienda;
+    public javax.swing.JButton inicioTienda;
+    public javax.swing.JButton irAPedido;
+    public javax.swing.JButton irAReportes;
+    public javax.swing.JButton irAVentas;
+    public javax.swing.JButton irMenuConsultas;
+    public javax.swing.JButton irMenuNuevaInfo;
     // End of variables declaration//GEN-END:variables
 }

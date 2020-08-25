@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -44,7 +45,7 @@ public class CargaArchivo extends javax.swing.JFrame {
         titulo = new javax.swing.JLabel();
         instruccionesUsuario = new javax.swing.JLabel();
         direccionArchivo = new javax.swing.JTextField();
-        agregarArchivo = new javax.swing.JButton();
+        cargarArchivo = new javax.swing.JButton();
         buscarArchivo = new javax.swing.JButton();
         salir = new javax.swing.JButton();
         instruccionesUsuario1 = new javax.swing.JLabel();
@@ -59,8 +60,8 @@ public class CargaArchivo extends javax.swing.JFrame {
 
         titulo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 48)); // NOI18N
         titulo.setForeground(new java.awt.Color(1, 1, 1));
-        titulo.setText("Carga de Archivos");
-        getContentPane().add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(87, 260, -1, 53));
+        titulo.setText("CARGA DE ARCHIVO");
+        getContentPane().add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 260, 520, 53));
 
         instruccionesUsuario.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
         instruccionesUsuario.setForeground(new java.awt.Color(4, 2, 2));
@@ -74,16 +75,16 @@ public class CargaArchivo extends javax.swing.JFrame {
         });
         getContentPane().add(direccionArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 390, 290, 30));
 
-        agregarArchivo.setBackground(new java.awt.Color(43, 46, 46));
-        agregarArchivo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
-        agregarArchivo.setForeground(new java.awt.Color(250, 250, 244));
-        agregarArchivo.setText("Cargar Archivo");
-        agregarArchivo.addActionListener(new java.awt.event.ActionListener() {
+        cargarArchivo.setBackground(new java.awt.Color(43, 46, 46));
+        cargarArchivo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        cargarArchivo.setForeground(new java.awt.Color(250, 250, 244));
+        cargarArchivo.setText("Cargar Archivo");
+        cargarArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                agregarArchivoActionPerformed(evt);
+                cargarArchivoActionPerformed(evt);
             }
         });
-        getContentPane().add(agregarArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 435, 290, 40));
+        getContentPane().add(cargarArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 435, 290, 40));
 
         buscarArchivo.setBackground(new java.awt.Color(43, 46, 46));
         buscarArchivo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
@@ -113,7 +114,7 @@ public class CargaArchivo extends javax.swing.JFrame {
         getContentPane().add(instruccionesUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 390, 290, 30));
 
         fondo.setBackground(new java.awt.Color(59, 55, 51));
-        getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 630, 560));
+        getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 570));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -138,7 +139,7 @@ public class CargaArchivo extends javax.swing.JFrame {
          }         */   
     }//GEN-LAST:event_buscarArchivoActionPerformed
 
-    private void agregarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarArchivoActionPerformed
+    private void cargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarArchivoActionPerformed
         
         File f;
           try {
@@ -147,11 +148,16 @@ public class CargaArchivo extends javax.swing.JFrame {
             f = new File(path);
             LecturaDeArchivo leer = new LecturaDeArchivo();
                     leer.muestraContenido(f);
-            
+             JOptionPane.showMessageDialog(null, "Carga de Archivo Completada");
+             Inicio interfaz = new Inicio();
+             interfaz.setVisible(true);
+             this.setVisible(false);
+             this.dispose();
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ocurrio un Error al Leer el Archivo");
         }
 
-    }//GEN-LAST:event_agregarArchivoActionPerformed
+    }//GEN-LAST:event_cargarArchivoActionPerformed
 
     private void direccionArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_direccionArchivoActionPerformed
         // TODO add your handling code here:
@@ -177,8 +183,8 @@ public class CargaArchivo extends javax.swing.JFrame {
         logo.setIcon(imageIconFinal);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JButton agregarArchivo;
     public javax.swing.JButton buscarArchivo;
+    public javax.swing.JButton cargarArchivo;
     public javax.swing.JTextField direccionArchivo;
     public javax.swing.JLabel fondo;
     public javax.swing.JLabel instruccionesUsuario;

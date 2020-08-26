@@ -23,11 +23,10 @@ public class AccesoEmpleado {
     public boolean insertarEmpleado(Empleado empleado){
         String query = "INSERT INTO EMPLEADO (Nombre,Codigo_Empleado,Telefono,DPI,NIT,Correo_Electronico,Direccion)"
                         + "VALUES(?,?,?,?,?,?,?)";
-        Connection conexion = null;
-        PreparedStatement enviar = null;
+        
+        
         try {
-            conexion = conexionMySQL.Conexion.conexionDB();
-            enviar = conexion.prepareStatement(query);
+           PreparedStatement enviar = Conexion.conexion.prepareStatement(query);
             enviar.setString(1, empleado.getNombre());
             enviar.setString(2, empleado.getCodigoEmpleado());
             enviar.setString(3, empleado.getTelefono());
@@ -42,25 +41,20 @@ public class AccesoEmpleado {
             ex.printStackTrace(System.out);
             return true;
             
-        }finally {
-            conexionMySQL.Conexion.close(enviar);
-        //conexionMySQL.Conexion.close(conexion);
-        
         }
     }
     public Empleado obtenerEmpleado(String codigo){
         String query = "SELECT * FROM EMPLEADO WHERE Codigo_Empleado = ?";
         Empleado empleado = null;
                 
-        Connection conexion = null;
-        PreparedStatement obtener = null;
-        ResultSet rs  = null;
+        
+        
+        
         
         try {
-            conexion = Conexion.conexionDB();
-            obtener = conexion.prepareStatement(query);
+            PreparedStatement obtener  = Conexion.conexion.prepareStatement(query);
             obtener.setString(1, codigo);
-            rs = obtener.executeQuery();
+            ResultSet rs = obtener.executeQuery();
             if(rs.next()){
               //  empleado = new Empleado(rs.getString("Nombre"), rs.getString("Codigo_Empleado"), rs.getString("Telefono"), rs.getString("DPI"), rs.getString("NIT"), codigo, query)
                 empleado=new Empleado(rs.getString("Nombre"), rs.getString("Codigo_Empleado"), rs.getString("Telefono"), rs.getString("DPI"));
@@ -70,12 +64,7 @@ public class AccesoEmpleado {
             }
         } catch (SQLException ex) {
             Logger.getLogger(AccesoEmpleado.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            //Conexion.close(rs);
-            Conexion.close(obtener);
-            Conexion.close(conexion);
         }
-        
         return empleado;
     
     }

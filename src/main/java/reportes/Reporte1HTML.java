@@ -22,7 +22,9 @@ public class Reporte1HTML {
             
             try (FileWriter archivo = new FileWriter("1-Reporte Pedidos que llegaran a la Tienda "+tiendaDestino+".html")) {
                 PrintWriter out = new PrintWriter(archivo);
-                //escribimos un archivo de texto con la estructura de html
+                /*
+                *Se realiza la escritura del archivo con la estructura HTML
+                 */
                 out.write("<!DOCTYPE html>\n");
                 out.write("<html>\n");
                 out.write("    <head>\n");
@@ -193,6 +195,19 @@ public class Reporte1HTML {
                 out.write("                <ul>\n");
                 for (int i = 0; i < tabla.getRowCount(); i++) {
                     String destino = (String) tabla.getValueAt(i, 11);
+                    out.println("<li>");
+                    out.println(destino);
+                    out.println("</li>");
+                }
+                out.write("                </ul>\n");
+                out.write("            </article>\n");
+                //TRECEAVA COLUMNA
+                out.write("            <article>\n");
+                out.write("                Tienda Origen\n");
+                out.write("                <br>\n");
+                out.write("                <ul>\n");
+                for (int i = 0; i < tabla.getRowCount(); i++) {
+                    String destino = (String) tabla.getValueAt(i, 12);
                     out.println("<li>");
                     out.println(destino);
                     out.println("</li>");

@@ -52,7 +52,7 @@ public class Pedido {
 
     //Constructor para todos los Metodos
 
-    public Pedido(int codigoPedido, String tiendaOrigen, String tiendaDestino, String fecha, String NITCliente, String codigoProducto, int cantidad, double subTotal, double anticipoEfectivo, String fechaLlegada, double total, double anticipoCredito, double anticipo, double totalAPagar, double pagoTotal, double caja, String estado, double precio, int idTiempo, int tiempoTiendas) {
+    public Pedido(int codigoPedido, String tiendaOrigen, String tiendaDestino, String fecha, String NITCliente, String codigoProducto, int cantidad, double subTotal, double anticipoEfectivo, String fechaLlegada, double total, double anticipoCredito, double anticipo, double totalAPagar, double pagoTotal, double caja, String estado, double precio) {
         this.codigoPedido = codigoPedido;
         this.tiendaOrigen = tiendaOrigen;
         this.tiendaDestino = tiendaDestino;
@@ -71,9 +71,10 @@ public class Pedido {
         this.caja = caja;
         this.estado = estado;
         this.precio = precio;
-        this.idTiempo = idTiempo;
-        this.tiempoTiendas = tiempoTiendas;
+       
     }
+
+
 
     public void setCodigoPedido(int codigoPedido) {
         this.codigoPedido = codigoPedido;

@@ -35,6 +35,11 @@ public class Cliente {
         this.correoElectronico = correoElectronico;
         this.direccion = direccion;
     }
+    //CONSTRUCTOR ACTUALIZACION DE CREDITO DE COMPRA
+    public Cliente(String NIT, double creditoCompra) {
+        this.NIT = NIT;
+        this.creditoCompra = creditoCompra;
+    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;

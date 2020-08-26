@@ -116,22 +116,22 @@ public class Reporte1 extends javax.swing.JFrame {
 
         tablePedidos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Codigo Pedido", "Fecha", "Fecha Llegada", "NIT Cliente", "Anticipo Efectivo", "Anticipo Credito", "Anticipo", "Total", "Total a Pagar", "Caja", "Estado"
+                "Codigo Pedido", "Fecha", "Fecha Llegada", "NIT Cliente", "Anticipo Efectivo", "Anticipo Credito", "Anticipo", "Total", "Total a Pagar", "Caja", "Estado", "Tienda Origen"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -176,13 +176,13 @@ public class Reporte1 extends javax.swing.JFrame {
         
     private void mostrarTablaCompleta() {
         DefaultTableModel model = new DefaultTableModel();
-        Conexion conexion = new Conexion();
-        ResultSet rs = conexion.getTabla("SELECT p.* FROM PEDIDO p INNER JOIN DETALLE_PEDIDO d ON d.Codigo_Pedido = p.Codigo_Pedido WHERE d.Tienda_Destino = '"+codigoTienda+"'");
-         model.setColumnIdentifiers(new Object[]{"Codigo Pedido", "Fecha", "Fecha_Llegada", "NIT Cliente","Anticipo Efectivo","Anticipo Credito","Anticipo","Total","Total a Pagar","Pago Total", "Caja","Estado"});
+        ResultSet rs = Conexion.getTabla("SELECT DISTINCT(p.Codigo_Pedido),p.Fecha,p.Fecha_Llegada,p.NIT_Cliente,p.Anticipo_Efectivo,p.Anticipo_Credito,p.Anticipo,p.Total,p.Total_A_Pagar,p.Pago_Total,p.Caja,p.Estado,d.Tienda_Origen FROM PEDIDO p RIGHT JOIN DETALLE_PEDIDO d ON d.Codigo_Pedido = p.Codigo_Pedido WHERE d.Tienda_Destino = '"+codigoTienda+"';");
+        //ResultSet rs = Conexion.getTabla("SELECT p.* FROM PEDIDO p INNER JOIN DETALLE_PEDIDO d ON d.Codigo_Pedido = p.Codigo_Pedido WHERE d.Tienda_Destino = '"+codigoTienda+"'");
+         model.setColumnIdentifiers(new Object[]{"Codigo Pedido", "Fecha", "Fecha_Llegada", "NIT Cliente","Anticipo Efectivo","Anticipo Credito","Anticipo","Total","Total a Pagar","Pago Total", "Caja","Estado","Tienda Origen"});
         
         try {
             while (rs.next()) {               
-                model.addRow(new Object[]{rs.getInt("Codigo_Pedido"), rs.getString("Fecha"), rs.getString("Fecha_Llegada"), rs.getString("NIT_Cliente"),rs.getDouble("Anticipo_Efectivo"),rs.getDouble("Anticipo_Credito"),rs.getDouble("Anticipo"),rs.getDouble("Total"),rs.getDouble("Total_A_Pagar"),rs.getDouble("Pago_Total"),rs.getDouble("Caja"),rs.getString("Estado")});
+                model.addRow(new Object[]{rs.getInt("Codigo_Pedido"), rs.getString("Fecha"), rs.getString("Fecha_Llegada"), rs.getString("NIT_Cliente"),rs.getDouble("Anticipo_Efectivo"),rs.getDouble("Anticipo_Credito"),rs.getDouble("Anticipo"),rs.getDouble("Total"),rs.getDouble("Total_A_Pagar"),rs.getDouble("Pago_Total"),rs.getDouble("Caja"),rs.getString("Estado"),rs.getString("Tienda_Origen")});
             }
             tablePedidos.setModel(model);
         } catch (SQLException e) {
@@ -222,6 +222,8 @@ public class Reporte1 extends javax.swing.JFrame {
         Reporte1HTML reporte = new Reporte1HTML();
             
             reporte.generarReporte(tablePedidos, nombreTienda);
+              JOptionPane.showMessageDialog(null, "Reporte Exportado con Exito \nEl Reporte se guardará en la carpeta SistemaIntelaf");
+     
     }//GEN-LAST:event_exportarReporteActionPerformed
 
     /**

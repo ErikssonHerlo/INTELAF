@@ -5,6 +5,7 @@
  */
 package accesoAObjetos;
 
+import conexionMySQL.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import objetos.Tiempo;
@@ -18,19 +19,20 @@ public class AccesoTiempo {
      public boolean insertarTiempo(Tiempo tiempo){
         String query = "INSERT INTO TIEMPO (Tienda_Origen,Tienda_Destino,Tiempo)"
                         + "VALUES(?,?,?)";
-        Connection conexion = null;
-        PreparedStatement enviar = null;
-        PreparedStatement enviarDoble = null;
+        
+        
+        
         try {
-            conexion = conexionMySQL.Conexion.conexionDB();
-            enviar = conexion.prepareStatement(query);
-            enviarDoble = conexion.prepareStatement(query);
+            PreparedStatement enviar = Conexion.conexion.prepareStatement(query);
+            
             //Envia los Datos de Tiempo de Origen y Destino
             enviar.setString(1, tiempo.getTiendaOrigen());
             enviar.setString(2, tiempo.getTiendaDestino());
             enviar.setInt(3, tiempo.getTiempo());
             enviar.executeUpdate();
+            
             //Al ser los mismos datos de Origen y Destino Invertido, se utiliza la misma query
+            PreparedStatement enviarDoble = Conexion.conexion.prepareStatement(query);
             enviarDoble.setString(1, tiempo.getTiendaDestino());
             enviarDoble.setString(2, tiempo.getTiendaOrigen());
             enviarDoble.setInt(3, tiempo.getTiempo());
@@ -39,11 +41,6 @@ public class AccesoTiempo {
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             return false;
-        }finally {
-            conexionMySQL.Conexion.close(enviar);
-            conexionMySQL.Conexion.close(enviarDoble);
-        conexionMySQL.Conexion.close(conexion);
-        
         }
     }
     

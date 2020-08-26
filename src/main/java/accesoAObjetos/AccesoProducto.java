@@ -20,12 +20,9 @@ public class AccesoProducto {
         String query="INSERT INTO EXISTENCIA_PRODUCTO(Nombre,Fabricante,Codigo_Producto,Existencia,Precio,Codigo_Tienda,Descripcion,Garantia)"
                     +"VALUES(?,?,?,?,?,?,?,?)";
         
-        Connection conexion = null;
-        PreparedStatement enviar = null;
         
-        try {
-            conexion = conexionMySQL.Conexion.conexionDB();
-            enviar = conexion.prepareStatement(query);
+        
+        try {PreparedStatement enviar =Conexion.conexion.prepareStatement(query);
             
             enviar.setString(1, producto.getNombre());
             enviar.setString(2, producto.getFabricante());
@@ -41,13 +38,27 @@ public class AccesoProducto {
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
             return false;
-        }finally{
-            conexionMySQL.Conexion.close(enviar);
-            
-            conexionMySQL.Conexion.close(conexion);
-
         }
     }
-    
+    public boolean actualizarExistencias(Producto producto){
+        //String query="INSERT INTO EXISTENCIA_PRODUCTO(Nombre,Fabricante,Codigo_Producto,Existencia,Precio,Codigo_Tienda,Descripcion,Garantia)"
+                   // +"VALUES(?,?,?,?,?,?,?,?)";
+          String queryUpdate="UPDATE EXISTENCIA_PRODUCTO SET Existencia=Existencia - ? WHERE Codigo_Producto = ? AND Codigo_Tienda = ?";
+     
+        
+        
+        try {PreparedStatement enviar =Conexion.conexion.prepareStatement(queryUpdate);
+            
+            enviar.setInt(1, producto.getExistencia());
+            enviar.setString(2, producto.getCodigoProducto());
+            enviar.setString(3, producto.getTiendaUbicacion());
+            enviar.executeUpdate();
+            return true;
+         
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+            return false;
+        }
+    }
     
 }

@@ -24,12 +24,11 @@ public class AccesoTienda {
         public boolean insertarTienda(Tienda tienda){
         String query = "INSERT INTO TIENDA (Nombre,Direccion,Codigo_Tienda,Telefono_1,Telefono_2,Horario,Correo_Electronico)"
                         + "VALUES(?,?,?,?,?,?,?)";
-        Connection conexion = null;
-        PreparedStatement enviar = null; //Enviar Datos
+        
+        
        
         try {
-            conexion = conexionMySQL.Conexion.conexionDB();
-            enviar = conexion.prepareStatement(query);
+            PreparedStatement enviar  = Conexion.conexion.prepareStatement(query);
             
             enviar.setString(1, tienda.getNombre());
             enviar.setString(2, tienda.getDireccion());
@@ -45,21 +44,14 @@ public class AccesoTienda {
             ex.printStackTrace(System.out);
             return false;
             
-        }finally {
-            conexionMySQL.Conexion.close(enviar);
-            conexionMySQL.Conexion.close(conexion);
-            
         }
        
     }
     public Tienda obtenerTienda(){
         
         Tienda tienda = null;
-        Conexion conexion = new Conexion();        
-        
-        PreparedStatement obtener = null;
-        
-        ResultSet rs = conexion.getTabla("SELECT * FROM TIENDA LIMIT 1");
+ 
+        ResultSet rs = Conexion.getTabla("SELECT * FROM TIENDA LIMIT 1");
         try {
             while (rs.next()) {
                 tienda = new Tienda(rs.getString("Nombre"), rs.getString("Direccion"), rs.getString("Codigo_Tienda"), rs.getString("Telefono_1"));

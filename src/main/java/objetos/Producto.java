@@ -20,7 +20,8 @@ public class Producto {
     private int garantia;
 
     //constructor Carga de Datos Obligatorios
-    public Producto(String nombre, String fabricante, String codigoProducto, int existencia, double precio, String tiendaUbicacion) {
+    
+            public Producto(String nombre, String fabricante, String codigoProducto, int existencia, double precio, String tiendaUbicacion) {
         this.nombre = nombre;
         this.fabricante = fabricante;
         this.codigoProducto = codigoProducto;
@@ -28,9 +29,18 @@ public class Producto {
         this.precio = precio;
         this.tiendaUbicacion = tiendaUbicacion;
     }    
-
-    //Constructor para todos los Datos
-
+    /**
+     * Constructor para todos los Datos
+     * @param nombre
+     * @param fabricante
+     * @param codigoProducto
+     * @param existencia
+     * @param precio
+     * @param tiendaUbicacion
+     * @param descripcion
+     * @param garantia 
+     */
+    
     public Producto(String nombre, String fabricante, String codigoProducto, int existencia, double precio, String tiendaUbicacion, String descripcion, int garantia) {
         this.nombre = nombre;
         this.fabricante = fabricante;
@@ -41,6 +51,14 @@ public class Producto {
         this.descripcion = descripcion;
         this.garantia = garantia;
     }
+    //CONSTRUCTOR PARA RESTAR EXISTENCIAS DE LOS NUEVOS PEDIDOS Y NUEVAS VENTAS
+    public Producto(String codigoProducto, int existencia, String tiendaUbicacion) {
+        this.codigoProducto = codigoProducto;
+        this.existencia = existencia;
+        this.tiendaUbicacion = tiendaUbicacion;
+    }
+    
+    
 
     public void setNombre(String nombre) {
         this.nombre = nombre;

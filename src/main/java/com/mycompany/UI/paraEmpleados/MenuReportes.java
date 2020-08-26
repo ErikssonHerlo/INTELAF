@@ -100,7 +100,7 @@ public class MenuReportes extends javax.swing.JFrame {
         irReporte4.setBackground(new java.awt.Color(43, 46, 46));
         irReporte4.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
         irReporte4.setForeground(new java.awt.Color(250, 250, 244));
-        irReporte4.setText("Pedidos en Transito");
+        irReporte4.setText("Pedidos que salieron de la Tienda");
         irReporte4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 irReporte4ActionPerformed(evt);
@@ -234,24 +234,27 @@ public class MenuReportes extends javax.swing.JFrame {
     }//GEN-LAST:event_irReporte1ActionPerformed
 
     private void irReporte2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte2ActionPerformed
-       VisualizarProductos eleccion = new VisualizarProductos(nombreTienda, codigoTienda);
+       Reporte2 eleccion = new Reporte2(nombreTienda, codigoTienda);
        eleccion.setVisible(true);
        this.setVisible(false);
     }//GEN-LAST:event_irReporte2ActionPerformed
 
     private void irReporte4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte4ActionPerformed
-        MenuNuevoEmpleado eleccion = new MenuNuevoEmpleado(nombreTienda, codigoTienda);
+        Reporte4 eleccion = new Reporte4(nombreTienda, codigoTienda);
         eleccion.setVisible(true);
         this.setVisible(false);
 // TODO add your handling code here:
     }//GEN-LAST:event_irReporte4ActionPerformed
 
     private void irReporte6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte6ActionPerformed
-        // TODO add your handling code here:
+        Reporte6 eleccion = new Reporte6(nombreTienda, codigoTienda);
+        eleccion.setVisible(true);
+        this.setVisible(false);
+                
     }//GEN-LAST:event_irReporte6ActionPerformed
 
     private void irReporte3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte3ActionPerformed
-        VisualizarTiempos eleccion = new VisualizarTiempos(nombreTienda, codigoTienda);
+        Reporte3 eleccion = new Reporte3(nombreTienda, codigoTienda);
         eleccion.setVisible(true);
         this.setVisible(false);
         
@@ -264,15 +267,22 @@ public class MenuReportes extends javax.swing.JFrame {
     }//GEN-LAST:event_irReporte5ActionPerformed
 
     private void irReporte7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte7ActionPerformed
-        // TODO add your handling code here:
+     Reporte7 eleccion = new Reporte7(nombreTienda, codigoTienda);
+      eleccion.setVisible(true);
+      this.setVisible(false);
     }//GEN-LAST:event_irReporte7ActionPerformed
 
     private void irReporte9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte9ActionPerformed
-        // TODO add your handling code here:
+        Reporte9 eleccion = new Reporte9(nombreTienda, codigoTienda);
+        eleccion.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_irReporte9ActionPerformed
 
     private void irReporte8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irReporte8ActionPerformed
-        // TODO add your handling code here:
+      Reporte8 eleccion = new Reporte8(nombreTienda, codigoTienda);
+      eleccion.setVisible(true);
+      this.setVisible(false);
+              
     }//GEN-LAST:event_irReporte8ActionPerformed
 
     /**

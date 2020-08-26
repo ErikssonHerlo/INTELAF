@@ -5,6 +5,7 @@
  */
 package com.mycompany.UI.paraEmpleados;
 
+import accesoAObjetos.AccesoCliente;
 import accesoAObjetos.AccesoPedido;
 import accesoAObjetos.AccesoProducto;
 import accesoAObjetos.AccesoTienda;
@@ -14,9 +15,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import objetos.Cliente;
 import objetos.Pedido;
 import objetos.Producto;
 import objetos.Tienda;
@@ -32,8 +36,24 @@ public class NuevoPedido extends javax.swing.JFrame {
     protected String codigoTienda;
     protected ArrayList<Pedido> listaProductosPedido= new ArrayList<>();    //AQUI SE GUARDAN TODOS LOS DATOS DEL DETALLE PEDIDO
     int registros=0;
-    protected ArrayList<String> tablaProductosTiendaOrigen= new ArrayList<>();   
-    private int codigoPedido;
+    protected ArrayList<String> tablaProductosTiendaOrigen= new ArrayList<>();
+    protected ArrayList<Double> creditoDisponibleCliente = new ArrayList<>();
+    protected ArrayList<String> listaNITCliente = new ArrayList<>();
+    private int codigoPedido,existenciaDelProducto,seleccion;
+    String infoAuxCredito ;
+    String tiendaOrigen,fechaPedido;
+    String infoTotal,infoCodigoPedido,infoTotalAPagar,infoAnticipoTotal;
+     Double total = 0.0,subTotal=0.0;
+     Double totalAPagar = 0.0;
+    Double auxTotal = 0.0;
+    Double auxCredito = 0.0, auxAnticipo=0.0;
+    String codigoProducto;
+    String auxFechaLlegada;
+      
+    int cantidad;
+    Double precio,caja=0.0;
+        Double anticipoTotal=0.0;
+        Double anticipoEfectivo=0.0,anticipoCredito=0.0;
     DefaultTableModel model = new DefaultTableModel();
      /**
      * Creates new form Interfaz
@@ -43,9 +63,17 @@ public class NuevoPedido extends javax.swing.JFrame {
         this.codigoTienda = codigoTienda;
         
         initComponents();
+        infoTienda.setText(this.nombreTienda);
         listaProductosPedido.isEmpty();
         //mostrarTabla();
         llenarCombos();
+        obtenerCodigoPedido();
+        infTotalPedido.setVisible(false);
+        infTotalAnticipo.setVisible(false);
+        infTotalAPagar.setVisible(false);
+        infCodigoPedido.setVisible(false);
+        infCreditoDisponible.setVisible(false);
+        agregar.setVisible(false);
         model.setColumnIdentifiers(new Object[]{"Codigo Pedido", "Tienda Origen", "Tienda Destino", "Codigo Producto","Cantidad","Precio","SubTotal"});
         this.tableProductosDelPedido.setModel(model);
         cargarFondo(Fondo1);
@@ -91,13 +119,10 @@ public class NuevoPedido extends javax.swing.JFrame {
         textoUsuario2 = new javax.swing.JTextField();
         textoUsuario3 = new javax.swing.JTextField();
         inUsuario14 = new javax.swing.JLabel();
-        infUsuario10 = new javax.swing.JLabel();
         infTotalAPagar = new javax.swing.JLabel();
         infUsuario12 = new javax.swing.JLabel();
-        textoUsuario4 = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableProductosDelPedido = new javax.swing.JTable();
-        Fondo = new javax.swing.JLabel();
         infUsuario11 = new javax.swing.JLabel();
         infUsuario13 = new javax.swing.JLabel();
         infUsuario14 = new javax.swing.JLabel();
@@ -106,7 +131,11 @@ public class NuevoPedido extends javax.swing.JFrame {
         textoUsuario7 = new javax.swing.JTextField();
         agregarProducto = new javax.swing.JButton();
         inUsuario9 = new javax.swing.JLabel();
-        agregar1 = new javax.swing.JButton();
+        infUsuario15 = new javax.swing.JLabel();
+        infCreditoDisponible = new javax.swing.JLabel();
+        agregarDatosPedido = new javax.swing.JButton();
+        verCredito = new javax.swing.JButton();
+        Fondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(640, 600));
@@ -153,12 +182,12 @@ public class NuevoPedido extends javax.swing.JFrame {
         infUsuario3.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario3.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario3.setText("Código del Pedido:");
-        getContentPane().add(infUsuario3, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 280, 160, 30));
+        getContentPane().add(infUsuario3, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 480, 160, 30));
 
         inUsuario13.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 10)); // NOI18N
         inUsuario13.setForeground(new java.awt.Color(4, 2, 2));
         inUsuario13.setText("AAAA-MM-DD");
-        getContentPane().add(inUsuario13, new org.netbeans.lib.awtextra.AbsoluteConstraints(588, 280, 80, 30));
+        getContentPane().add(inUsuario13, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 510, 80, 20));
 
         textoUsuario1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,7 +199,7 @@ public class NuevoPedido extends javax.swing.JFrame {
                 textoUsuario1KeyTyped(evt);
             }
         });
-        getContentPane().add(textoUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 280, 130, 30));
+        getContentPane().add(textoUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 480, 130, 30));
 
         agregar.setBackground(new java.awt.Color(43, 46, 46));
         agregar.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
@@ -203,7 +232,7 @@ public class NuevoPedido extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -251,8 +280,8 @@ public class NuevoPedido extends javax.swing.JFrame {
 
         inUsuario12.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
         inUsuario12.setForeground(new java.awt.Color(4, 2, 2));
-        inUsuario12.setText("INFORMACIÓN DEL PEDIDO*:");
-        getContentPane().add(inUsuario12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 290, 30));
+        inUsuario12.setText("INFORMACIÓN DE LOS PRODUCTOS: **");
+        getContentPane().add(inUsuario12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 390, 30));
 
         infoTienda.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 14)); // NOI18N
         infoTienda.setText("Nombre Tienda");
@@ -265,52 +294,52 @@ public class NuevoPedido extends javax.swing.JFrame {
                 comboNITClienteActionPerformed(evt);
             }
         });
-        getContentPane().add(comboNITCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 280, 80, 30));
+        getContentPane().add(comboNITCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 480, 80, 30));
 
         infUsuario2.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario2.setForeground(new java.awt.Color(4, 2, 2));
-        infUsuario2.setText("Ingrese la Fecha de Hoy:");
-        getContentPane().add(infUsuario2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 280, 210, 30));
+        infUsuario2.setText("Ingrese la Fecha de Hoy:*");
+        getContentPane().add(infUsuario2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 480, 210, 30));
 
         infUsuario1.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario1.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario1.setText("Ingrese el NIT del Cliente:");
-        getContentPane().add(infUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 230, 30));
+        getContentPane().add(infUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 480, 230, 30));
 
         infCodigoPedido.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infCodigoPedido.setForeground(new java.awt.Color(4, 2, 2));
         infCodigoPedido.setText("No.");
-        getContentPane().add(infCodigoPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 280, 60, 30));
+        getContentPane().add(infCodigoPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 480, 60, 30));
 
         infUsuario4.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario4.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario4.setText("Anticipo Efectivo:");
-        getContentPane().add(infUsuario4, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 320, 150, 30));
+        getContentPane().add(infUsuario4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 560, 150, 30));
 
         infUsuario5.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario5.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario5.setText("Anticipo Credito:");
-        getContentPane().add(infUsuario5, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 320, 150, 30));
+        getContentPane().add(infUsuario5, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 560, 150, 30));
 
         infUsuario6.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario6.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario6.setText("Anticipo Total:");
-        getContentPane().add(infUsuario6, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 320, 130, 30));
+        getContentPane().add(infUsuario6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 560, 130, 30));
 
         infUsuario7.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario7.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario7.setText("Total del Pedido:");
-        getContentPane().add(infUsuario7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 140, 30));
+        getContentPane().add(infUsuario7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 520, 140, 30));
 
         infTotalPedido.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infTotalPedido.setForeground(new java.awt.Color(4, 2, 2));
         infTotalPedido.setText("000.00");
-        getContentPane().add(infTotalPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 320, 80, 30));
+        getContentPane().add(infTotalPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 520, 80, 30));
 
         infTotalAnticipo.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infTotalAnticipo.setForeground(new java.awt.Color(4, 2, 2));
         infTotalAnticipo.setText("000.00");
-        getContentPane().add(infTotalAnticipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 320, 90, 30));
+        getContentPane().add(infTotalAnticipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 560, 90, 30));
 
         textoUsuario2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -322,7 +351,7 @@ public class NuevoPedido extends javax.swing.JFrame {
                 textoUsuario2KeyTyped(evt);
             }
         });
-        getContentPane().add(textoUsuario2, new org.netbeans.lib.awtextra.AbsoluteConstraints(392, 320, 80, 30));
+        getContentPane().add(textoUsuario2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 560, 80, 30));
 
         textoUsuario3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -334,39 +363,22 @@ public class NuevoPedido extends javax.swing.JFrame {
                 textoUsuario3KeyTyped(evt);
             }
         });
-        getContentPane().add(textoUsuario3, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 320, 80, 30));
+        getContentPane().add(textoUsuario3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 560, 80, 30));
 
         inUsuario14.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 18)); // NOI18N
         inUsuario14.setForeground(new java.awt.Color(4, 2, 2));
-        inUsuario14.setText("INFORMACIÓN DE LOS PRODUCTOS:");
-        getContentPane().add(inUsuario14, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 400, 360, 30));
-
-        infUsuario10.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
-        infUsuario10.setForeground(new java.awt.Color(4, 2, 2));
-        infUsuario10.setText("Pago Total:");
-        getContentPane().add(infUsuario10, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 360, 130, 30));
+        inUsuario14.setText("INFORMACIÓN DEL PEDIDO: **");
+        getContentPane().add(inUsuario14, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 360, 30));
 
         infTotalAPagar.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infTotalAPagar.setForeground(new java.awt.Color(4, 2, 2));
         infTotalAPagar.setText("000.00");
-        getContentPane().add(infTotalAPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 355, 80, 30));
+        getContentPane().add(infTotalAPagar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 520, 80, 30));
 
         infUsuario12.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario12.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario12.setText("Total a Pagar:");
-        getContentPane().add(infUsuario12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 355, 130, 30));
-
-        textoUsuario4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textoUsuario4ActionPerformed(evt);
-            }
-        });
-        textoUsuario4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                textoUsuario4KeyTyped(evt);
-            }
-        });
-        getContentPane().add(textoUsuario4, new org.netbeans.lib.awtextra.AbsoluteConstraints(392, 360, 80, 30));
+        getContentPane().add(infUsuario12, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 520, 130, 30));
 
         tableProductosDelPedido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -396,26 +408,22 @@ public class NuevoPedido extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tableProductosDelPedido);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 480, 750, 120));
-
-        Fondo.setBackground(new java.awt.Color(59, 55, 51));
-        Fondo.setText("Fondo General");
-        getContentPane().add(Fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 970, 250));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 750, 120));
 
         infUsuario11.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario11.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario11.setText("Cantidad:");
-        getContentPane().add(infUsuario11, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 430, 80, 30));
+        getContentPane().add(infUsuario11, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 280, 80, 30));
 
         infUsuario13.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario13.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario13.setText("Código del Producto:");
-        getContentPane().add(infUsuario13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 430, 180, 30));
+        getContentPane().add(infUsuario13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 180, 30));
 
         infUsuario14.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
         infUsuario14.setForeground(new java.awt.Color(4, 2, 2));
         infUsuario14.setText("Precio:");
-        getContentPane().add(infUsuario14, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 430, 70, 30));
+        getContentPane().add(infUsuario14, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 280, 70, 30));
 
         textoUsuario5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,7 +435,7 @@ public class NuevoPedido extends javax.swing.JFrame {
                 textoUsuario5KeyTyped(evt);
             }
         });
-        getContentPane().add(textoUsuario5, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 430, 110, 30));
+        getContentPane().add(textoUsuario5, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 280, 110, 30));
 
         textoUsuario6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -439,7 +447,7 @@ public class NuevoPedido extends javax.swing.JFrame {
                 textoUsuario6KeyTyped(evt);
             }
         });
-        getContentPane().add(textoUsuario6, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 430, 80, 30));
+        getContentPane().add(textoUsuario6, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 280, 80, 30));
 
         textoUsuario7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -451,7 +459,7 @@ public class NuevoPedido extends javax.swing.JFrame {
                 textoUsuario7KeyTyped(evt);
             }
         });
-        getContentPane().add(textoUsuario7, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 430, 80, 30));
+        getContentPane().add(textoUsuario7, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 280, 80, 30));
 
         agregarProducto.setBackground(new java.awt.Color(43, 46, 46));
         agregarProducto.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
@@ -462,23 +470,48 @@ public class NuevoPedido extends javax.swing.JFrame {
                 agregarProductoActionPerformed(evt);
             }
         });
-        getContentPane().add(agregarProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 480, 170, 40));
+        getContentPane().add(agregarProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 320, 170, 40));
 
         inUsuario9.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 10)); // NOI18N
         inUsuario9.setForeground(new java.awt.Color(4, 2, 2));
-        inUsuario9.setText("**TODOS LOS CAMPOS SON OBLIGATORIOS");
+        inUsuario9.setText("*FECHA EN FORMATO AÑO-MES-DIA");
         getContentPane().add(inUsuario9, new org.netbeans.lib.awtextra.AbsoluteConstraints(415, 650, 250, 20));
 
-        agregar1.setBackground(new java.awt.Color(43, 46, 46));
-        agregar1.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
-        agregar1.setForeground(new java.awt.Color(250, 250, 244));
-        agregar1.setText("Agregar");
-        agregar1.addActionListener(new java.awt.event.ActionListener() {
+        infUsuario15.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
+        infUsuario15.setForeground(new java.awt.Color(4, 2, 2));
+        infUsuario15.setText("Credito Disponible:");
+        getContentPane().add(infUsuario15, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 520, 170, 30));
+
+        infCreditoDisponible.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 16)); // NOI18N
+        infCreditoDisponible.setForeground(new java.awt.Color(4, 2, 2));
+        infCreditoDisponible.setText("000.00");
+        getContentPane().add(infCreditoDisponible, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 520, 80, 30));
+
+        agregarDatosPedido.setBackground(new java.awt.Color(43, 46, 46));
+        agregarDatosPedido.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        agregarDatosPedido.setForeground(new java.awt.Color(250, 250, 244));
+        agregarDatosPedido.setText("Agregar Datos");
+        agregarDatosPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                agregar1ActionPerformed(evt);
+                agregarDatosPedidoActionPerformed(evt);
             }
         });
-        getContentPane().add(agregar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 410, 150, 40));
+        getContentPane().add(agregarDatosPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 550, 170, 40));
+
+        verCredito.setBackground(new java.awt.Color(43, 46, 46));
+        verCredito.setFont(new java.awt.Font("DejaVu Serif Condensed", 1, 15)); // NOI18N
+        verCredito.setForeground(new java.awt.Color(250, 250, 244));
+        verCredito.setText("Ver Credito");
+        verCredito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verCreditoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(verCredito, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 515, 170, 30));
+
+        Fondo.setBackground(new java.awt.Color(59, 55, 51));
+        Fondo.setText("Fondo General");
+        getContentPane().add(Fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 970, 690));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -492,14 +525,13 @@ public class NuevoPedido extends javax.swing.JFrame {
         try {
             while (rs.next()) {
                
-                model.addRow(new Object[]{rs.getString("Nombre"), rs.getString("Fabricante"), rs.getString("Codigo_Producto"), rs.getInt("Precio"),rs.getString("Precio"),rs.getString("Codigo_Tienda"),rs.getString("Descripcion"),rs.getInt("Garantia")});
+                model.addRow(new Object[]{rs.getString("Nombre"), rs.getString("Fabricante"), rs.getString("Codigo_Producto"), rs.getInt("Existencia"),rs.getDouble("Precio"),rs.getString("Codigo_Tienda"),rs.getString("Descripcion"),rs.getInt("Garantia")});
             }
             tableProductos.setModel(model);
         } catch (SQLException e) {
         }
     }
-
- 
+    
  
     private void llenarCombos() throws SQLException {
         
@@ -515,25 +547,42 @@ public class NuevoPedido extends javax.swing.JFrame {
 
         }
      
-        ResultSet rs1 = Conexion.getTabla("SELECT NIT FROM CLIENTE");
+        ResultSet rs1 = Conexion.getTabla("SELECT NIT,Credito_Compra FROM CLIENTE");
             try {
             while (rs1.next()) {
                 comboNITCliente.addItem(rs1.getString(1));
-                
+                listaNITCliente.add(rs1.getString(1));
+                creditoDisponibleCliente.add(rs1.getDouble(2));
                 }
 
         } catch (SQLException e) {
 
         }
-        ResultSet rs2 = Conexion.getTabla("SELECT Codigo_Pedido FROM PEDIDO WHERE Codigo_Pedido = (SELECT MAX(Codigo_Pedido) FROM PEDIDO);");
+       
+    }
+    private void obtenerCodigoPedido() throws SQLException{
+     ResultSet rs2 = Conexion.getTabla("SELECT Codigo_Pedido FROM PEDIDO WHERE Codigo_Pedido = (SELECT MAX(Codigo_Pedido) FROM PEDIDO);");
             try {
             while (rs2.next()) {
-                codigoPedido= rs2.getInt(1);
+                codigoPedido= rs2.getInt(1)+1;
                 }
 
         } catch (SQLException e) {
 
         }
+            
+    }
+  private void obtenerFechaLlegada(int codigoPedido) throws SQLException{
+     ResultSet rs2 = Conexion.getTabla("SELECT Fecha_Llegada FROM PEDIDO WHERE Codigo_Pedido = "+codigoPedido);
+            try {
+            while (rs2.next()) {
+                auxFechaLlegada = rs2.getString(1);
+                }
+
+        } catch (SQLException e) {
+
+        }
+            
     }
     private void inicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inicioActionPerformed
               // TODO add your handling code here:
@@ -560,37 +609,59 @@ public class NuevoPedido extends javax.swing.JFrame {
     }//GEN-LAST:event_textoUsuario1ActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-        
-        String nombre = textoUsuario1.getText();
-        String fabricante=textoUsuario2.getText();
-        String codigo =textoUsuario3.getText();
-        int existencia = Integer.parseInt(textoUsuario4.getText());
-        Double precio = Double.parseDouble(textoUsuario5.getText());
-        String descripcion = textoUsuario6.getText();
-        int garantia = Integer.parseInt(textoUsuario7.getText());
-        if (nombre.equals("") || fabricante.equals("") || codigo.equals("") || existencia==0 || precio==0){
-            JOptionPane.showMessageDialog(null, "Ingrese todos los Campos Obligatorios");
-        }else{
-            Producto nuevo = new Producto(nombre, fabricante, codigo, existencia, precio, codigoTienda,descripcion,garantia);
-            accesoAObjetos.AccesoProducto llenar = new AccesoProducto();
-             if(!llenar.insertarProducto(nuevo))
-        {   JOptionPane.showMessageDialog(null, "No se puedo Ingresar la tienda "+nombre+"\ndebido a que tiene datos repetidos con otra Tienda ingresada en la Base de Datos");
-        }else{
-            JOptionPane.showMessageDialog(null, "Producto Agregado Exitosamente");
-            MenuEmpleado eleccion = new MenuEmpleado(nombreTienda,codigoTienda);
+        String estado = "Transito";
+        AccesoPedido llenar = new AccesoPedido();
+        AccesoProducto actualizar = new AccesoProducto();
+        AccesoCliente cambiar = new AccesoCliente();
+        for (int i=0;i<tableProductosDelPedido.getRowCount();i++){
+            
+           // llenar.insertarPedido(new Pedido(codigoPedido, tiendaOrigen, codigoTienda, fechaPedido,listaNITCliente.get(comboNITCliente.getSelectedIndex()-1), (String)tableProductosDelPedido.getValueAt(i,3),cantidad,subTotal,
+            
+              //Este es el constructor funcional      
+            llenar.insertarNuevoPedido(new Pedido(codigoPedido, tiendaOrigen, codigoTienda, fechaPedido,listaNITCliente.get(comboNITCliente.getSelectedIndex()-1), (String)tableProductosDelPedido.getValueAt(i,3), (Integer)tableProductosDelPedido.getValueAt(i, 4),(Double)tableProductosDelPedido.getValueAt(i, 6), anticipoEfectivo,fechaPedido,auxTotal,anticipoCredito, anticipoTotal,totalAPagar,0,caja,estado,(Double)tableProductosDelPedido.getValueAt(i, 5)));
+            actualizar.actualizarExistencias(new Producto((String)tableProductosDelPedido.getValueAt(i, 3),(Integer)tableProductosDelPedido.getValueAt(i, 4) , tiendaOrigen));
+            System.out.println(i+"ra Fila -----------------------------------");
+            System.out.println("Codigo del Pedido: "+codigoPedido);
+            System.out.println("Tienda Origen: "+tiendaOrigen);
+            System.out.println("Tienda Destino: "+codigoTienda);
+            System.out.println("Fecha: "+fechaPedido);
+            System.out.println("NIT Cliente: "+listaNITCliente.get(comboNITCliente.getSelectedIndex()-1));
+            System.out.println("Codigo Producto: "+(String)tableProductosDelPedido.getValueAt(i, 3));
+            System.out.println("Cantidad: "+(Integer)tableProductosDelPedido.getValueAt(i, 4));
+            System.out.println("SubTotal: "+(Double)tableProductosDelPedido.getValueAt(i, 6));
+            System.out.println("Anticipo Efectivo: "+anticipoEfectivo);
+            System.out.println("Fecha Llegada: "+fechaPedido);
+            System.out.println("Total Pedido: "+auxTotal);
+            System.out.println("Anticipo Credito: "+anticipoCredito);
+            System.out.println("Anticipo Total: "+anticipoTotal);
+            System.out.println("Total A Pagar: "+totalAPagar);
+            System.out.println("Pago Total: "+0);
+            System.out.println("Caja: "+caja);
+            System.out.println("Estado: "+estado);
+            System.out.println("Precio: "+(Double)tableProductosDelPedido.getValueAt(i, 5));
+
+        }
+        cambiar.actualizarCredito(new Cliente(listaNITCliente.get(comboNITCliente.getSelectedIndex()-1), anticipoCredito));
+            
+        try {
+            
+            obtenerFechaLlegada(codigoPedido);
+
+
+        } catch (SQLException ex) {
+            Logger.getLogger(NuevoPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JOptionPane.showMessageDialog(null, "El Pedido No. "+codigoPedido+" se ha procesado correctamente, \n su pedido estará llegando a la tienda el dia "+auxFechaLlegada);
+        MenuEmpleado eleccion = new MenuEmpleado(nombreTienda, codigoTienda);
               eleccion.setVisible(true);
               this.setVisible(false);
-              this.dispose();
-        }
-        }
-        
     }//GEN-LAST:event_agregarActionPerformed
 
     private void tableProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProductosMouseClicked
-        int seleccion = tableProductos.getSelectedRow();
+        seleccion = tableProductos.getSelectedRow();
         textoUsuario5.setText(tableProductos.getValueAt(seleccion, 2).toString());
         textoUsuario7.setText(tableProductos.getValueAt(seleccion, 4).toString());
-        
+        existenciaDelProducto = (int) tableProductos.getValueAt(seleccion, 3);
         
     }//GEN-LAST:event_tableProductosMouseClicked
 
@@ -600,15 +671,15 @@ public class NuevoPedido extends javax.swing.JFrame {
 
     private void buscarTiendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarTiendaActionPerformed
         if(comboTienda.getSelectedIndex()!=0){
+           
             mostrarTabla(tablaProductosTiendaOrigen.get(comboTienda.getSelectedIndex()-1));
-          //MenuEmpleado accesarAlMenu = new MenuEmpleado(comboTienda.getItemAt(comboTienda.getSelectedIndex()),tablaTienda.get(comboTienda.getSelectedIndex()-1));
-        //accesarAlMenu.setVisible(true);
+            
         
         } else
         {
             JOptionPane.showMessageDialog(null, "Por favor, Seleccione una Tienda");
                    
-        }// TODO add your handling code here:
+        }
     }//GEN-LAST:event_buscarTiendaActionPerformed
 
     private void comboNITClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboNITClienteActionPerformed
@@ -651,19 +722,6 @@ public class NuevoPedido extends javax.swing.JFrame {
         }   
     }//GEN-LAST:event_textoUsuario3KeyTyped
 
-    private void textoUsuario4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textoUsuario4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textoUsuario4ActionPerformed
-
-    private void textoUsuario4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textoUsuario4KeyTyped
-if(!Character.isDigit(evt.getKeyChar())&&evt.getKeyChar()!='.'){
-            evt.consume();
-        }
-        if(evt.getKeyChar()=='.'&&textoUsuario4.getText().contains(".")){
-            evt.consume();
-        }                   // TODO add your handling code here:
-    }//GEN-LAST:event_textoUsuario4KeyTyped
-
     private void tableProductosDelPedidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProductosDelPedidoMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tableProductosDelPedidoMouseClicked
@@ -702,88 +760,155 @@ if(!Character.isDigit(evt.getKeyChar())&&evt.getKeyChar()!='.'){
     }//GEN-LAST:event_textoUsuario7KeyTyped
 
     private void agregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarProductoActionPerformed
-      //BLOQUE DE OPERACIONES
-        //HACER FUNCION QUE DEVUELVA UN ENTERO, DONDE SE OBTENGA EL CODIGO DEL PEDIDO MAS GRANDE
-        String tiendaOrigen;
+      /**
+       * Metodo para Agregar Productos a la Tabla
+       */
+        //DECLARACION DE VARIABLES A UTILIZAR
+        total=0.0;
+        
+        codigoProducto = textoUsuario5.getText();
+        cantidad = Integer.parseInt(textoUsuario6.getText());
+        precio = Double.parseDouble(textoUsuario7.getText());
+       
+
+        subTotal =cantidad*precio;
+       
+        total =+subTotal;
+        auxTotal =auxTotal+total;
+        
+        totalAPagar = auxTotal - anticipoTotal;
+        //BLOQUE DE STRINGS PARA EL ARRAYLIST
+         infoTotal = Double.toString(auxTotal);
+         infoCodigoPedido = Integer.toString(codigoPedido);
+         infoTotalAPagar = Double.toString(totalAPagar);
+        
+        
+        
+        //PRIMERA VALIDACIÓN: ELECCION DE LA TIENDA
         if(comboTienda.getSelectedIndex()!=0){
-        tiendaOrigen = tablaProductosTiendaOrigen.get(comboTienda.getSelectedIndex()-1);
+            tiendaOrigen = tablaProductosTiendaOrigen.get(comboTienda.getSelectedIndex()-1);
+        
+            //ACCIONES DE VISUALIZACIÓN DE INFORMACION
+            infCodigoPedido.setText(infoCodigoPedido);
+            infCodigoPedido.setVisible(true);
+            comboTienda.setVisible(false);
+            buscarTienda.setVisible(false);
+            //SEGUNDA VALIDACION: INGRESO DE CAMPOS OBLIGATORIOS
+            if(tiendaOrigen.equals("") || codigoProducto.equals("") || textoUsuario6.getText().equals("") || textoUsuario7.getText().equals(""))
+            {
+                JOptionPane.showMessageDialog(null, "Ingrese todos los Campos Obligatorios");
+            }
+            else
+            {
+                //TERCERA VALIDACION: EXISTENCIA DE PRODUCTOS ELEGIDOS
+                if(cantidad > existenciaDelProducto){
+                    JOptionPane.showMessageDialog(null, "Ingrese una Cantidad de Productos que si se encuentre en la Tienda");
+                    textoUsuario6.setText("");
+                } else {
+                    existenciaDelProducto = existenciaDelProducto -cantidad;
+                    tableProductos.setValueAt(existenciaDelProducto, seleccion, 3);
+                    model.addRow(new Object[]{codigoPedido, tiendaOrigen, codigoTienda, codigoProducto,cantidad,precio,subTotal});
+                    textoUsuario5.setText("");
+                    textoUsuario6.setText("");
+                    textoUsuario7.setText("");
+                    infTotalPedido.setText(infoTotal);
+                    infTotalPedido.setVisible(true);
+                    
+                    
+                    infTotalAnticipo.setText(infoAnticipoTotal);
+                    infTotalAnticipo.setVisible(true);
+                    
+                    infTotalAPagar.setText(infoTotalAPagar);
+                    infTotalAPagar.setVisible(true);
+                    
+                }
+            }
+        
+        
         }else{
         tiendaOrigen = "";
+        JOptionPane.showMessageDialog(null, "Elija una Tienda para Consultar los Productos");
         }
         
-        String codigoProducto = textoUsuario5.getText();
-        int cantidad = Integer.parseInt(textoUsuario6.getText().trim());
-        Double precio = Double.parseDouble(textoUsuario7.getText().trim());
-        double subTotal =cantidad*precio;
-        double total = 0;
-        total =+subTotal;
-        
-        //BLOQUE DE STRINGS PARA EL ARRAYLIST
-        String infoTotal = Double.toString(total);
-        String infoCodigoPedido = Integer.toString(codigoPedido);
-        String infoSubTotal = Double.toString(subTotal);
+      
 
-        //ACCIONES DE MUESTRA DE INFORMACION
-       infCodigoPedido.setText(infoCodigoPedido);
-        
-        
-        
-        if(tiendaOrigen.equals("") || codigoProducto.equals("") || textoUsuario6.getText().isEmpty() || textoUsuario7.getText().isEmpty())
-        {
-            JOptionPane.showMessageDialog(null, "Ingrese todos los Campos Obligatorios");
-        }
-        else
-        {
-            model.addRow(new Object[]{codigoPedido, tiendaOrigen, codigoTienda, codigoProducto,cantidad,precio,subTotal});
-       
-        //    mostrarTablaProductosDelPedido(codigoPedido, tiendaOrigen, codigoTienda, codigoProducto, cantidad, precio, subTotal);
-        //        comboTienda.getItemAt(comboTienda.getSelectedIndex()),tablaTienda.get(comboTienda.getSelectedIndex()-1)
-        //AGREGAR TODOS LOS CAMPOS DEL DETALLE PEDIDO
-        //    
-       /* for (int i=0;i<tableProductosDelPedido.getRowCount();i++){
-            t
-            llenar.insertarPedido(new Pedido(codigoPedido, (String)tableProductosDelPedido.getValueAt(i, 1), tiendaOrigen, Fondo1, nombreTienda, codigoProducto, cantidad, 0, 0, tiendaOrigen, 0, 0, 0, 0, 0, 0, Fondo1, 0, WIDTH, cantidad));
-            }
-        listaProductosPedido.add(infoCodigoPedido);         
-        listaProductosPedido.add(tiendaOrigen);             
-        listaProductosPedido.add(codigoTienda);
-        listaProductosPedido.add(codigoProducto);
-        listaProductosPedido.add(textoUsuario6.getText()); //CANTIDAD
-        listaProductosPedido.add(textoUsuario7.getText()); //PRECIO
-        listaProductosPedido.add(infoSubTotal);
-        
-        //VISUALIZACION EN CONSOLA
-        
-        for (int i=0; i<listaProductosPedido.size();i=i+7)
-        {
-        System.out.println(i+listaProductosPedido.get(i));
-        System.out.println(i+1+listaProductosPedido.get(i+1));
-        System.out.println(i+2+listaProductosPedido.get(i+2));
-        System.out.println(i+3+listaProductosPedido.get(i+3));
-        System.out.println(i+4+listaProductosPedido.get(i+4));
-        System.out.println(i+5+listaProductosPedido.get(i+5));
-        System.out.println(i+6+listaProductosPedido.get(i+6));
-        
-        }//envio al objeto asi
-        //for recorra arry list y que meta en el constructor los 
-        for ()
-        Pedido enviar = new Pedido(codigoPedido,listaProductosPedido(i))
-        registros++;
-        //LIMPIAR LA INTERFAZ
-        textoUsuario5.setText("");
-        textoUsuario6.setText("");
-        textoUsuario7.setText("");
-        infTotalPedido.setText(infoTotal);
-        
-         }
-*/
-    }                                        
+                                        
     }//GEN-LAST:event_agregarProductoActionPerformed
 
-    private void agregar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar1ActionPerformed
-  
+    private void agregarDatosPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarDatosPedidoActionPerformed
+    auxCredito = creditoDisponibleCliente.get(comboNITCliente.getSelectedIndex()-1);    
+    //VALIDACION DE VALORES PARA EL ANTICIPO     
+        if(textoUsuario2.getText().equals("") && textoUsuario3.getText().equals("")){
+            anticipoEfectivo =0.0;
+            anticipoCredito = 0.0;
+        } else if(textoUsuario2.getText().equals("") && !textoUsuario3.getText().equals("")){
+            anticipoEfectivo = 0.0;
+            anticipoCredito = Double.parseDouble(textoUsuario3.getText());
+        }else if(!textoUsuario2.getText().equals("") && textoUsuario3.getText().equals("")){
+           anticipoEfectivo = Double.parseDouble(textoUsuario2.getText());
+           anticipoCredito = 0.0;
+        }else {
+            anticipoEfectivo = Double.parseDouble(textoUsuario2.getText());
+            anticipoCredito = Double.parseDouble(textoUsuario3.getText());
+        }
+        if(auxCredito ==0){
+        anticipoCredito = 0.0;
+        
+        }
+        anticipoTotal = anticipoEfectivo +anticipoCredito;
+        fechaPedido = textoUsuario1.getText();
+        auxAnticipo = auxTotal*0.25;
+        
+        
+        //VALIDACION PORCENTAJE DEL PEDIDO
+        if(anticipoTotal<auxAnticipo && auxCredito==0){
+            JOptionPane.showMessageDialog(null, "El valor del Anticipo Efectivo debe ser mayor a "+auxAnticipo);
+            
+        } else if(anticipoTotal<auxAnticipo){
+            JOptionPane.showMessageDialog(null, "El valor del Anticipo debe ser mayor a "+auxAnticipo);
+        }
+        //PRIMERA VALIDACION DE CAMPOS LLENOS
+        System.out.println(comboNITCliente.getSelectedIndex());
+        System.out.println(fechaPedido);
+        System.out.println(anticipoTotal + "Mayor que "+ auxAnticipo);
+        if(comboNITCliente.getSelectedIndex()!=0 && !fechaPedido.equals("") && anticipoTotal>auxAnticipo)
+        {
+              totalAPagar = auxTotal-anticipoTotal;
+              infoAnticipoTotal = Double.toString(anticipoTotal);
+              infoTotalAPagar = Double.toString(totalAPagar);
+              auxCredito = creditoDisponibleCliente.get(comboNITCliente.getSelectedIndex()-1);
+              auxCredito = auxCredito-anticipoCredito;
+              String infoAuxCredito = auxCredito.toString();
+              infCreditoDisponible.setText(infoAuxCredito);
+              caja = anticipoTotal;
+              infTotalAnticipo.setText(infoAnticipoTotal);
+              infTotalAPagar.setText(infoTotalAPagar);
+              agregar.setVisible(true);
+              JOptionPane.showMessageDialog(null, "Datos Informativos, agregados correctamente");
+        } else
+        {
+            JOptionPane.showMessageDialog(null, "Por favor, Ingrese todos los Datos en los Campos Obligatorios");
+                   
+        } 
+        
 
-    }//GEN-LAST:event_agregar1ActionPerformed
+    }//GEN-LAST:event_agregarDatosPedidoActionPerformed
+
+    private void verCreditoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verCreditoActionPerformed
+        infCreditoDisponible.setVisible(true);
+        if(comboNITCliente.getSelectedIndex()!=0){
+              
+              auxCredito = creditoDisponibleCliente.get(comboNITCliente.getSelectedIndex()-1);
+              infoAuxCredito= auxCredito.toString();
+              infCreditoDisponible.setText(infoAuxCredito);
+              
+              
+        } else
+        {
+            JOptionPane.showMessageDialog(null, "Por favor, Seleccione un Cliente");
+                   
+        }
+    }//GEN-LAST:event_verCreditoActionPerformed
     
     /**
      */
@@ -804,7 +929,7 @@ if(!Character.isDigit(evt.getKeyChar())&&evt.getKeyChar()!='.'){
     public javax.swing.JLabel Fondo;
     public javax.swing.JLabel Titulo;
     public javax.swing.JButton agregar;
-    public javax.swing.JButton agregar1;
+    public javax.swing.JButton agregarDatosPedido;
     public javax.swing.JButton agregarProducto;
     public javax.swing.JButton buscarTienda;
     public javax.swing.JButton cerrarSesion;
@@ -818,15 +943,16 @@ if(!Character.isDigit(evt.getKeyChar())&&evt.getKeyChar()!='.'){
     public javax.swing.JLabel inUsuario8;
     public javax.swing.JLabel inUsuario9;
     public javax.swing.JLabel infCodigoPedido;
+    public javax.swing.JLabel infCreditoDisponible;
     public javax.swing.JLabel infTotalAPagar;
     public javax.swing.JLabel infTotalAnticipo;
     public javax.swing.JLabel infTotalPedido;
     public javax.swing.JLabel infUsuario1;
-    public javax.swing.JLabel infUsuario10;
     public javax.swing.JLabel infUsuario11;
     public javax.swing.JLabel infUsuario12;
     public javax.swing.JLabel infUsuario13;
     public javax.swing.JLabel infUsuario14;
+    public javax.swing.JLabel infUsuario15;
     public javax.swing.JLabel infUsuario2;
     public javax.swing.JLabel infUsuario3;
     public javax.swing.JLabel infUsuario4;
@@ -843,9 +969,9 @@ if(!Character.isDigit(evt.getKeyChar())&&evt.getKeyChar()!='.'){
     public javax.swing.JTextField textoUsuario1;
     public javax.swing.JTextField textoUsuario2;
     public javax.swing.JTextField textoUsuario3;
-    public javax.swing.JTextField textoUsuario4;
     public javax.swing.JTextField textoUsuario5;
     public javax.swing.JTextField textoUsuario6;
     public javax.swing.JTextField textoUsuario7;
+    public javax.swing.JButton verCredito;
     // End of variables declaration//GEN-END:variables
 }

@@ -189,7 +189,14 @@ public class MenuEmpleado extends javax.swing.JFrame {
     }//GEN-LAST:event_irAPedidoActionPerformed
 
     private void irAVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irAVentasActionPerformed
-        // TODO add your handling code here:
+        NuevaVenta eleccion = null;
+        try {
+            eleccion = new NuevaVenta(nombreTienda, codigoTienda);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        eleccion.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_irAVentasActionPerformed
 
     private void irAReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irAReportesActionPerformed

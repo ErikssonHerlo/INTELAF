@@ -295,7 +295,7 @@ public class Reporte5 extends javax.swing.JFrame {
         if(comboNITCliente.getSelectedIndex()!=0){    
             Reporte5HTML reporte = new Reporte5HTML();
             reporte.generarReporte(tableDetalleVentas, listaNombreCliente.get(comboNITCliente.getSelectedIndex()-1));
-            JOptionPane.showMessageDialog(null, "Reporte Exportado con Exito");
+            JOptionPane.showMessageDialog(null, "Reporte Exportado con Exito \nEl Reporte se guardará en la carpeta SistemaIntelaf");
         } else {
         JOptionPane.showMessageDialog(null, "Por favor, Seleccione un Campo de Busqueda para poder Generar el Reporte");
        

@@ -49,62 +49,50 @@ public class AccesoCliente {
         }
         
     }
-         public Cliente obtenerEmpleado(String NIT){
+
+    public Cliente obtenerCliente(String codigo)
+    {
         String query = "SELECT * FROM CLIENTE WHERE NIT = ?";
         Cliente cliente = null;
-                
-        Connection conexion = null;
-        PreparedStatement obtener = null;
-        ResultSet rs  = null;
-        
         try {
-            conexion = Conexion.conexionDB();
-            obtener = conexion.prepareStatement(query);
-            obtener.setString(1, NIT);
-            rs = obtener.executeQuery();
-            if(rs.next()){
-                cliente = new Cliente(rs.getString("Nombre"), rs.getString("NIT"), rs.getString("Telefono"), rs.getDouble("Credito_Compra"));
-                cliente.setDPI(rs.getString("DPI"));
-                cliente.setCorreoElectronico("Correo_Electronico");
-                cliente.setDireccion("Direccion");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AccesoEmpleado.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            Conexion.close((Connection) rs);
-            Conexion.close(obtener);
-            Conexion.close(conexion);
-        }
-        
-        return cliente;
-    
-    }
-         public Cliente obtenerCliente(String codigo){
-        String query = "SELECT * FROM CLIENTE WHERE NIT = ?";
-        Cliente cliente = null;
-                
-        Connection conexion = null;
-        PreparedStatement obtener = null;
-        ResultSet rs  = null;
-        
-        try {
-            conexion = Conexion.conexionDB();
-            obtener = conexion.prepareStatement(query);
+            
+            PreparedStatement obtener = Conexion.conexion.prepareStatement(query);
             obtener.setString(1, codigo);
-            rs = obtener.executeQuery();
+            ResultSet rs = obtener.executeQuery();
             if(rs.next()){
               //  empleado = new Empleado(rs.getString("Nombre"), rs.getString("Codigo_Empleado"), rs.getString("Telefono"), rs.getString("DPI"), rs.getString("NIT"), codigo, query)
               cliente = new Cliente (rs.getString("Nombre"), rs.getString("NIT"), rs.getString("Telefono"),rs.getDouble("Credito_Compra"),rs.getString("DPI"),rs.getString("Correo_Electronico"),rs.getString("Direccion"));
               }
         } catch (SQLException ex) {
             Logger.getLogger(AccesoEmpleado.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            //Conexion.close(rs);
-            Conexion.close(obtener);
-            Conexion.close(conexion);
         }
         
         return cliente;
     
     }
+
+
+
+    public boolean actualizarCredito(Cliente cliente){
+           String queryUpdate="UPDATE CLIENTE SET Credito_Compra = Credito_Compra - ? WHERE NIT = ?";
+
+        try {
+            PreparedStatement actualizar =Conexion.conexion.prepareStatement(queryUpdate);
+            
+            actualizar.setDouble(1, cliente.getCreditoCompra());
+            actualizar.setString(2, cliente.getNIT());
+            actualizar.executeUpdate();
+            return true;
+         
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+            return false;
+        }
+    
+        }    
+    
 }
+
+            
+          
+    
